@@ -32,14 +32,18 @@ jobs:
           chmod +x /usr/local/bin/terragrunt
           terragrunt --version
 
-      - name: Set KUBECONFIG
+      - name: Start Minikube
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG_CONTENT }}" > ~/.kube/config
+          minikube start
+
+      - name: Set KUBECONFIG for Minikube
+        run: |
+          export KUBECONFIG=$(minikube config view --format '{{.KubeConfigPath}}')
+          echo "KUBECONFIG set to Minikube configuration"
 
       - name: Terragrunt ${{ github.event.inputs.action }}
         env:
-          KUBECONFIG: ~/.kube/config
+          KUBECONFIG: $KUBECONFIG
         run: |
           cd kubernetes/argocd
           terragrunt ${{ github.event.inputs.action }} -auto-approve
