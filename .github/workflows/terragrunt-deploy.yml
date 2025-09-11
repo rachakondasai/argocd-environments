@@ -32,7 +32,14 @@ jobs:
           chmod +x /usr/local/bin/terragrunt
           terragrunt --version
 
+      - name: Set KUBECONFIG
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_CONTENT }}" > ~/.kube/config
+
       - name: Terragrunt ${{ github.event.inputs.action }}
+        env:
+          KUBECONFIG: ~/.kube/config
         run: |
           cd kubernetes/argocd
           terragrunt ${{ github.event.inputs.action }} -auto-approve
