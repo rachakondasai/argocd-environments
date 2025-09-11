@@ -1,0 +1,12 @@
+# Terraform and Terragrunt
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terragrunt-cache/
+*.lock.hcl
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
