@@ -1,17 +1,20 @@
 name: Terragrunt Deploy
 
 on:
-  push:
-    branches:
-      - main
-      - prod
-      - stage
-      - qa
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy (prod, stage, qa)'
+        required: true
+        default: 'prod'
+      action:
+        description: 'Action to perform (apply or destroy)'
+        required: true
+        default: 'apply'
 
 jobs:
-  terragrunt-apply:
+  terragrunt:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,7 +28,7 @@ jobs:
           chmod +x terragrunt_linux_amd64
           sudo mv terragrunt_linux_amd64 /usr/local/bin/terragrunt
 
-      - name: Terragrunt Apply
+      - name: Terragrunt ${{ github.event.inputs.action }}
         run: |
           cd kubernetes/argocd
-          terragrunt apply -auto-approve
+          terragrunt ${{ github.event.inputs.action }} -auto-approve
