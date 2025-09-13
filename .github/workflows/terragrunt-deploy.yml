@@ -52,3 +52,23 @@ jobs:
         run: |
           cd kubernetes/argocd
           terragrunt ${{ github.event.inputs.action }} -auto-approve
+
+      - name: Show ArgoCD resources
+        run: |
+          kubectl get ns argocd || true
+          kubectl get all -n argocd || true
+          kubectl -n argocd get events --sort-by=.lastTimestamp | tail -n 100 || true
+
+      - name: Wait for ArgoCD rollouts
+        run: |
+          kubectl -n argocd rollout status deploy/argocd-server --timeout=5m || true
+          kubectl -n argocd rollout status deploy/argocd-repo-server --timeout=5m || true
+          kubectl -n argocd rollout status deploy/argocd-application-controller --timeout=5m || true
+
+      - name: ArgoCD access info
+        run: |
+          echo "Service URL(s):" || true
+          minikube service -n argocd argocd-server --url || true
+          echo "Initial admin password:" || true
+          kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d || true
+          echo || true
