@@ -36,6 +36,10 @@ resource "helm_release" "argocd" {
   chart      = "argo-cd"
   version    = "7.3.3"
 
+  atomic          = true
+  cleanup_on_fail = true
+  timeout         = 600
+
   values = [
   <<EOT
   server:
