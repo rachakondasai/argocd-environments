@@ -63,7 +63,7 @@ jobs:
         run: |
           kubectl -n argocd rollout status deploy/argocd-server --timeout=5m || true
           kubectl -n argocd rollout status deploy/argocd-repo-server --timeout=5m || true
-          kubectl -n argocd rollout status deploy/argocd-application-controller --timeout=5m || true
+          kubectl -n argocd rollout status statefulset/argocd-application-controller --timeout=5m || true
 
       - name: ArgoCD access info
         run: |
