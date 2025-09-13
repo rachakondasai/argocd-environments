@@ -38,12 +38,17 @@ jobs:
 
       - name: Set KUBECONFIG for Minikube
         run: |
-          export KUBECONFIG=$(minikube config view --format '{{.KubeConfigPath}}')
+          echo "KUBECONFIG=$(minikube config view --format '{{.KubeConfigPath}}')" >> $GITHUB_ENV
           echo "KUBECONFIG set to Minikube configuration"
+
+      - name: Verify cluster
+        run: |
+          kubectl get nodes
+          kubectl get ns
 
       - name: Terragrunt ${{ github.event.inputs.action }}
         env:
-          KUBECONFIG: $KUBECONFIG
+          KUBECONFIG: ${{ env.KUBECONFIG }}
         run: |
           cd kubernetes/argocd
           terragrunt ${{ github.event.inputs.action }} -auto-approve

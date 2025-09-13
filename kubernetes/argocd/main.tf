@@ -37,10 +37,13 @@ resource "helm_release" "argocd" {
   version    = "7.3.3"
 
   values = [
-    <<EOF
-server:
-  service:
-    type: NodePort
-EOF
-  ]
+  <<EOT
+  server:
+    service:
+      type: NodePort
+      # Avoid hardcoded defaults 30080/30443 used by the chart
+      nodePortHttp: null
+      nodePortHttps: null
+  EOT
+]
 }
