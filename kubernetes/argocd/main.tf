@@ -43,7 +43,9 @@ resource "helm_release" "argocd" {
   values = [
   <<EOT
   server:
+    enabled: true
     service:
+      enabled: true
       type: NodePort
       # Avoid hardcoded defaults 30080/30443 used by the chart
       nodePortHttp: null
